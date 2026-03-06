@@ -878,11 +878,13 @@ function generatePrompt() {
 
   let prompt = '';
 
+  const restrictions = `\n\nRestricciones importantes:\n- Vista en ángulo 3/4 frontal\n- Llantas perfectamente redondas y uniformes\n- Estilo limpio y bien definido\n- Fondo blanco o neutro, sin escenario ni elementos adicionales\n- Sin sombra proyectada debajo del vehículo\n- Sin reflejos en el suelo\n- Sin efecto espejo ni base brillante`;
+
   if (changes.length === 0) {
-    prompt = `Basándote en el automóvil de la imagen, crea una versión digital de alta calidad del carrito de carreras conservando exactamente las características del dibujo original. Mantén las proporciones, la forma del chasis, el estilo de las llantas y todos los detalles tal como aparecen en el dibujo. El resultado debe ser un automóvil bien definido, con colores vivos, contornos limpios y aspecto profesional, listo para ser usado como referencia en un modelo 3D.`;
+    prompt = `Basándote en el automóvil de la imagen, crea una versión digital de alta calidad del carrito de carreras conservando exactamente las características del dibujo original. Mantén las proporciones, la forma del chasis, el estilo de las llantas y todos los detalles tal como aparecen en el dibujo. El resultado debe ser un automóvil bien definido, con colores vivos, contornos limpios y aspecto profesional, listo para ser usado como referencia en un modelo 3D.${restrictions}`;
   } else {
     const changeList = changes.map((c, i) => `${i + 1}. ${c}`).join('\n');
-    prompt = `Basándote en el automóvil de la imagen, crea una versión digital de alta calidad del carrito de carreras aplicando las siguientes modificaciones:\n\n${changeList}\n\nConserva todos los demás detalles del dibujo original tal como están. El resultado debe ser un automóvil bien definido, con colores vivos, contornos limpios y aspecto profesional, listo para ser usado como referencia en un modelo 3D.`;
+    prompt = `Basándote en el automóvil de la imagen, crea una versión digital de alta calidad del carrito de carreras aplicando las siguientes modificaciones:\n\n${changeList}\n\nConserva todos los demás detalles del dibujo original tal como están. El resultado debe ser un automóvil bien definido, con colores vivos, contornos limpios y aspecto profesional, listo para ser usado como referencia en un modelo 3D.${restrictions}`;
   }
 
   document.getElementById('prompt-output').value = prompt;
