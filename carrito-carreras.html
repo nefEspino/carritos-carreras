@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏎️ ¡Diseña tu Carrito de Carreras!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #FF3B3B;
+    --yellow: #FFD600;
+    --blue: #1E90FF;
+    --green: #2ECC40;
+    --purple: #A855F7;
+    --orange: #FF6B2B;
+    --bg: #0D0D1A;
+    --card: #16163A;
+    --card2: #1E1E4A;
+    --text: #FFFFFF;
+    --subtext: #A0A8D0;
+    --border: #2E2E6A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(255,59,59,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(30,144,255,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.08) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    padding: 28px 20px 16px;
+    position: relative;
+  }
+
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 6vw, 3.8rem);
+    background: linear-gradient(135deg, #FF3B3B 0%, #FFD600 40%, #1E90FF 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(255,214,0,0.4));
+    line-height: 1.1;
+  }
+
+  header p {
+    font-size: 1.1rem;
+    color: var(--subtext);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .speed-lines {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .speed-line {
+    position: absolute;
+    height: 2px;
+    border-radius: 2px;
+    opacity: 0.15;
+    animation: shoot 2.5s linear infinite;
+  }
+
+  @keyframes shoot {
+    from { transform: translateX(-120%); }
+    to { transform: translateX(120vw); }
+  }
+
+  .main-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 16px 40px;
+  }
+
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title span.emoji { font-size: 1.6rem; }
+
+  .section {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 18px;
+    border: 2px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .section.chassis::before { background: linear-gradient(90deg, var(--red), var(--orange)); }
+  .section.wheels::before { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+  .section.height::before { background: linear-gradient(90deg, var(--green), #00CFFF); }
+  .section.tilt::before { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+
+  /* OPTION GRID */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .option-card {
+    background: var(--card2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    position: relative;
+    user-select: none;
+  }
+
+  .option-card:hover {
+    border-color: var(--yellow);
+    transform: translateY(-3px);
+    background: #24245A;
+  }
+
+  .option-card.selected {
+    border-color: var(--yellow);
+    background: #2A2A60;
+    box-shadow: 0 0 16px rgba(255,214,0,0.35);
+  }
+
+  .option-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 5px; right: 8px;
+    font-size: 0.85rem;
+    color: var(--yellow);
+    font-weight: 900;
+  }
+
+  .option-svg {
+    width: 90px;
+    height: 56px;
+    margin: 0 auto 6px;
+    display: block;
+  }
+
+  .option-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .keep-card {
+    background: linear-gradient(135deg, #1A3A1A, #1E2E1E);
+    border-color: var(--green);
+  }
+
+  .keep-card .option-svg { filter: drop-shadow(0 0 6px rgba(46,204,64,0.4)); }
+  .keep-card.selected { border-color: var(--green); box-shadow: 0 0 16px rgba(46,204,64,0.35); }
+  .keep-card.selected::after { color: var(--green); }
+  .keep-card .option-label { color: var(--green); }
+
+  /* SLIDER SECTION */
+  .slider-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .slider-preview {
+    flex: 0 0 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slider-controls {
+    flex: 1;
+  }
+
+  .slider-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--subtext);
+    margin-bottom: 6px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 10px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 10px rgba(255,214,0,0.5);
+    cursor: pointer;
+    border: 3px solid #fff;
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--subtext);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .keep-btn-row {
+    margin-top: 8px;
+  }
+
+  .keep-slider-btn {
+    background: linear-gradient(135deg, #1A3A1A, #1E2E1E);
+    border: 2px solid var(--green);
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: var(--green);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .keep-slider-btn:hover { background: #1E3A1E; transform: scale(1.03); }
+  .keep-slider-btn.active { box-shadow: 0 0 14px rgba(46,204,64,0.4); }
+
+  /* PROMPT SECTION */
+  .prompt-section {
+    background: linear-gradient(135deg, #0A0A22, #12122E);
+    border: 2px solid #3B3B8A;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+
+  .prompt-section .section-title {
+    color: var(--yellow);
+  }
+
+  #prompt-output {
+    width: 100%;
+    min-height: 130px;
+    background: #0D0D20;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    color: #D0D8FF;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    margin-top: 12px;
+  }
+
+  #prompt-output:focus { border-color: var(--yellow); }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-generate {
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(255,59,59,0.35);
+    flex: 1;
+    justify-content: center;
+    min-width: 180px;
+  }
+
+  .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,59,59,0.5); }
+  .btn-generate:active { transform: scale(0.97); }
+
+  .btn-copy {
+    background: linear-gradient(135deg, #1A2A4A, #243566);
+    color: var(--blue);
+    border: 2px solid var(--blue);
+    box-shadow: 0 4px 14px rgba(30,144,255,0.2);
+  }
+
+  .btn-copy:hover { background: #243566; box-shadow: 0 6px 20px rgba(30,144,255,0.35); transform: translateY(-2px); }
+  .btn-copy.copied { background: linear-gradient(135deg, #0A2A0A, #143014); color: var(--green); border-color: var(--green); }
+
+  .copy-feedback {
+    font-size: 0.8rem;
+    color: var(--green);
+    font-weight: 700;
+    display: none;
+    margin-top: 6px;
+  }
+
+  .copy-feedback.show { display: block; animation: fadeIn 0.3s; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Checkered flag decorations */
+  .flag-deco {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background-image: 
+      linear-gradient(45deg, #fff 25%, transparent 25%),
+      linear-gradient(-45deg, #fff 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #fff 75%),
+      linear-gradient(-45deg, transparent 75%, #fff 75%);
+    background-size: 8px 8px;
+    background-color: #222;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Glow pulse on generate */
+  @keyframes glow-pulse {
+    0% { box-shadow: 0 4px 18px rgba(255,59,59,0.35); }
+    50% { box-shadow: 0 4px 30px rgba(255,59,59,0.7), 0 0 40px rgba(255,107,43,0.4); }
+    100% { box-shadow: 0 4px 18px rgba(255,59,59,0.35); }
+  }
+
+  .btn-generate.animating { animation: glow-pulse 0.6s ease; }
+
+  @media (max-width: 600px) {
+    .options-grid { grid-template-columns: repeat(3, 1fr); }
+    .option-svg { width: 70px; height: 44px; }
+    .slider-row { flex-direction: column; align-items: flex-start; }
+    .slider-preview { flex: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="speed-lines" id="speedLines"></div>
+
+<header style="position:relative; z-index:1;">
+  <h1>🏎️ ¡Diseña tu Carrito!</h1>
+  <p>Elige cómo quieres que quede tu auto de carreras ✏️🚀</p>
+</header>
+
+<div class="main-container">
+
+  <!-- CHASIS -->
+  <div class="section chassis">
+    <div class="section-title"><span class="emoji">🚗</span> Forma del Chasis</div>
+    <div class="options-grid" id="chassis-options">
+
+      <div class="option-card keep-card selected" data-value="keep" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <text x="45" y="32" text-anchor="middle" fill="#2ECC40" font-size="28">✏️</text>
+          <text x="45" y="50" text-anchor="middle" fill="#2ECC40" font-size="9" font-family="Nunito,sans-serif" font-weight="700">Mi dibujo</text>
+        </svg>
+        <div class="option-label" style="color:#2ECC40">Dejar como está<br>en mi dibujo</div>
+      </div>
+
+      <div class="option-card" data-value="f1" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- F1 style -->
+          <ellipse cx="45" cy="30" rx="38" ry="11" fill="#FF3B3B"/>
+          <rect x="18" y="20" width="54" height="10" rx="5" fill="#CC2222"/>
+          <ellipse cx="22" cy="38" rx="9" ry="6" fill="#222"/>
+          <ellipse cx="68" cy="38" rx="9" ry="6" fill="#222"/>
+          <rect x="36" y="14" width="18" height="8" rx="3" fill="#FFD600"/>
+          <ellipse cx="22" cy="38" rx="5" ry="3.5" fill="#555"/>
+          <ellipse cx="68" cy="38" rx="5" ry="3.5" fill="#555"/>
+        </svg>
+        <div class="option-label">Fórmula 1</div>
+      </div>
+
+      <div class="option-card" data-value="gokart" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Go-kart low flat -->
+          <rect x="12" y="26" width="66" height="12" rx="6" fill="#1E90FF"/>
+          <ellipse cx="22" cy="40" rx="9" ry="6" fill="#222"/>
+          <ellipse cx="68" cy="40" rx="9" ry="6" fill="#222"/>
+          <rect x="34" y="18" width="22" height="9" rx="4" fill="#0066CC"/>
+          <ellipse cx="22" cy="40" rx="5" ry="3.5" fill="#555"/>
+          <ellipse cx="68" cy="40" rx="5" ry="3.5" fill="#555"/>
+          <rect x="12" y="26" width="10" height="12" rx="3" fill="#0080FF"/>
+          <rect x="68" y="26" width="10" height="12" rx="3" fill="#0080FF"/>
+        </svg>
+        <div class="option-label">Go-Kart Clásico</div>
+      </div>
+
+      <div class="option-card" data-value="mariokart" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Mario Kart bubbly -->
+          <ellipse cx="45" cy="28" rx="35" ry="14" fill="#FF6B2B"/>
+          <ellipse cx="45" cy="27" rx="30" ry="11" fill="#FF8C42"/>
+          <ellipse cx="24" cy="40" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="66" cy="40" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="24" cy="40" rx="6" ry="4" fill="#666"/>
+          <ellipse cx="66" cy="40" rx="6" ry="4" fill="#666"/>
+          <ellipse cx="45" cy="22" rx="12" ry="6" fill="#FFD600" opacity="0.9"/>
+          <circle cx="38" cy="22" r="3" fill="#FF3B3B"/>
+          <circle cx="52" cy="22" r="3" fill="#FF3B3B"/>
+        </svg>
+        <div class="option-label">Mario Kart 🍄</div>
+      </div>
+
+      <div class="option-card" data-value="muscle" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Muscle car -->
+          <rect x="10" y="24" width="70" height="16" rx="4" fill="#A855F7"/>
+          <rect x="20" y="14" width="40" height="12" rx="5" fill="#8B3CF7"/>
+          <rect x="55" y="20" width="22" height="14" rx="3" fill="#9945EE"/>
+          <ellipse cx="20" cy="42" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="70" cy="42" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="20" cy="42" rx="6" ry="4" fill="#555"/>
+          <ellipse cx="70" cy="42" rx="6" ry="4" fill="#555"/>
+          <rect x="10" y="28" width="8" height="8" rx="2" fill="#CC88FF"/>
+        </svg>
+        <div class="option-label">Muscle Car</div>
+      </div>
+
+      <div class="option-card" data-value="rally" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Rally/SUV style -->
+          <rect x="8" y="22" width="74" height="18" rx="5" fill="#2ECC40"/>
+          <rect x="18" y="12" width="44" height="14" rx="5" fill="#27AE36"/>
+          <ellipse cx="20" cy="43" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="70" cy="43" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="20" cy="43" rx="6" ry="4" fill="#555"/>
+          <ellipse cx="70" cy="43" rx="6" ry="4" fill="#555"/>
+          <rect x="62" y="22" width="8" height="6" rx="2" fill="#55DD66"/>
+          <rect x="8" y="22" width="8" height="6" rx="2" fill="#55DD66"/>
+          <!-- Roof rack -->
+          <rect x="22" y="10" width="36" height="3" rx="1.5" fill="#FFD600"/>
+        </svg>
+        <div class="option-label">Rally / Off-Road</div>
+      </div>
+
+      <div class="option-card" data-value="futuristic" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Futuristic wedge -->
+          <polygon points="5,38 45,18 85,38 75,44 15,44" fill="#00CFFF"/>
+          <polygon points="15,38 45,20 75,38" fill="#008FAF" opacity="0.6"/>
+          <ellipse cx="20" cy="42" rx="8" ry="5" fill="#111"/>
+          <ellipse cx="70" cy="42" rx="8" ry="5" fill="#111"/>
+          <ellipse cx="20" cy="42" rx="4.5" ry="3" fill="#00CFFF" opacity="0.6"/>
+          <ellipse cx="70" cy="42" rx="4.5" ry="3" fill="#00CFFF" opacity="0.6"/>
+          <polygon points="30,28 60,28 55,34 35,34" fill="#FFD600" opacity="0.8"/>
+        </svg>
+        <div class="option-label">Futurista ⚡</div>
+      </div>
+
+      <div class="option-card" data-value="monster" onclick="select(this,'chassis')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Monster truck style -->
+          <rect x="14" y="20" width="62" height="16" rx="5" fill="#FF3B3B"/>
+          <rect x="22" y="12" width="36" height="12" rx="4" fill="#CC2222"/>
+          <ellipse cx="20" cy="42" rx="14" ry="10" fill="#222"/>
+          <ellipse cx="70" cy="42" rx="14" ry="10" fill="#222"/>
+          <ellipse cx="20" cy="42" rx="8" ry="6" fill="#555"/>
+          <ellipse cx="70" cy="42" rx="8" ry="6" fill="#555"/>
+          <!-- lug nuts -->
+          <circle cx="20" cy="42" r="2.5" fill="#FFD600"/>
+          <circle cx="70" cy="42" r="2.5" fill="#FFD600"/>
+        </svg>
+        <div class="option-label">Monster Truck 🔥</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LLANTAS -->
+  <div class="section wheels">
+    <div class="section-title"><span class="emoji">🛞</span> Modelo de Llantas</div>
+    <div class="options-grid" id="wheels-options">
+
+      <div class="option-card keep-card selected" data-value="keep" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <text x="45" y="32" text-anchor="middle" fill="#2ECC40" font-size="28">✏️</text>
+          <text x="45" y="50" text-anchor="middle" fill="#2ECC40" font-size="9" font-family="Nunito,sans-serif" font-weight="700">Mi dibujo</text>
+        </svg>
+        <div class="option-label" style="color:#2ECC40">Dejar como está<br>en mi dibujo</div>
+      </div>
+
+      <div class="option-card" data-value="thin_race" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <circle cx="25" cy="30" r="18" fill="#222" stroke="#888" stroke-width="2"/>
+          <circle cx="25" cy="30" r="12" fill="#444"/>
+          <circle cx="25" cy="30" r="5" fill="#AAA"/>
+          <line x1="25" y1="18" x2="25" y2="42" stroke="#888" stroke-width="1.5"/>
+          <line x1="13" y1="30" x2="37" y2="30" stroke="#888" stroke-width="1.5"/>
+          <circle cx="65" cy="30" r="18" fill="#222" stroke="#888" stroke-width="2"/>
+          <circle cx="65" cy="30" r="12" fill="#444"/>
+          <circle cx="65" cy="30" r="5" fill="#AAA"/>
+          <line x1="65" y1="18" x2="65" y2="42" stroke="#888" stroke-width="1.5"/>
+          <line x1="53" y1="30" x2="77" y2="30" stroke="#888" stroke-width="1.5"/>
+        </svg>
+        <div class="option-label">Llanta de Carrera</div>
+      </div>
+
+      <div class="option-card" data-value="fat_offroad" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <circle cx="22" cy="30" r="20" fill="#1A1A1A" stroke="#555" stroke-width="3"/>
+          <circle cx="22" cy="30" r="12" fill="#333"/>
+          <circle cx="22" cy="30" r="5" fill="#FFD600"/>
+          <!-- tread marks -->
+          <line x1="22" y1="10" x2="22" y2="50" stroke="#555" stroke-width="2.5" stroke-dasharray="4,3"/>
+          <line x1="2" y1="30" x2="42" y2="30" stroke="#555" stroke-width="2.5" stroke-dasharray="4,3"/>
+          <circle cx="68" cy="30" r="20" fill="#1A1A1A" stroke="#555" stroke-width="3"/>
+          <circle cx="68" cy="30" r="12" fill="#333"/>
+          <circle cx="68" cy="30" r="5" fill="#FFD600"/>
+          <line x1="68" y1="10" x2="68" y2="50" stroke="#555" stroke-width="2.5" stroke-dasharray="4,3"/>
+          <line x1="48" y1="30" x2="88" y2="30" stroke="#555" stroke-width="2.5" stroke-dasharray="4,3"/>
+        </svg>
+        <div class="option-label">Off-Road / Gruesa</div>
+      </div>
+
+      <div class="option-card" data-value="chrome_spoke" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Chrome spoke wheels -->
+          <circle cx="22" cy="30" r="18" fill="#111" stroke="#CCC" stroke-width="2"/>
+          <circle cx="22" cy="30" r="7" fill="#DDD"/>
+          <line x1="22" y1="12" x2="22" y2="48" stroke="#CCC" stroke-width="2"/>
+          <line x1="4" y1="30" x2="40" y2="30" stroke="#CCC" stroke-width="2"/>
+          <line x1="9" y1="17" x2="35" y2="43" stroke="#CCC" stroke-width="2"/>
+          <line x1="35" y1="17" x2="9" y2="43" stroke="#CCC" stroke-width="2"/>
+          <circle cx="68" cy="30" r="18" fill="#111" stroke="#CCC" stroke-width="2"/>
+          <circle cx="68" cy="30" r="7" fill="#DDD"/>
+          <line x1="68" y1="12" x2="68" y2="48" stroke="#CCC" stroke-width="2"/>
+          <line x1="50" y1="30" x2="86" y2="30" stroke="#CCC" stroke-width="2"/>
+          <line x1="55" y1="17" x2="81" y2="43" stroke="#CCC" stroke-width="2"/>
+          <line x1="81" y1="17" x2="55" y2="43" stroke="#CCC" stroke-width="2"/>
+        </svg>
+        <div class="option-label">Rayos Cromados ✨</div>
+      </div>
+
+      <div class="option-card" data-value="star_alloy" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Star alloy -->
+          <circle cx="22" cy="30" r="18" fill="#222" stroke="#FF3B3B" stroke-width="2"/>
+          <circle cx="22" cy="30" r="6" fill="#FF3B3B"/>
+          <polygon points="22,14 24,24 34,24 26,30 29,40 22,34 15,40 18,30 10,24 20,24" fill="#FF3B3B" opacity="0.7"/>
+          <circle cx="68" cy="30" r="18" fill="#222" stroke="#FF3B3B" stroke-width="2"/>
+          <circle cx="68" cy="30" r="6" fill="#FF3B3B"/>
+          <polygon points="68,14 70,24 80,24 72,30 75,40 68,34 61,40 64,30 56,24 66,24" fill="#FF3B3B" opacity="0.7"/>
+        </svg>
+        <div class="option-label">Estrella Racing ⭐</div>
+      </div>
+
+      <div class="option-card" data-value="bubble" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Cartoon bubbly wheels -->
+          <circle cx="22" cy="30" r="19" fill="#1E90FF" stroke="#60C0FF" stroke-width="2"/>
+          <circle cx="22" cy="30" r="10" fill="#003A7A"/>
+          <circle cx="22" cy="30" r="4" fill="#60C0FF"/>
+          <circle cx="16" cy="22" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="28" cy="22" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="16" cy="38" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="28" cy="38" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="68" cy="30" r="19" fill="#1E90FF" stroke="#60C0FF" stroke-width="2"/>
+          <circle cx="68" cy="30" r="10" fill="#003A7A"/>
+          <circle cx="68" cy="30" r="4" fill="#60C0FF"/>
+          <circle cx="62" cy="22" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="74" cy="22" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="62" cy="38" r="3.5" fill="#003A7A" opacity="0.8"/>
+          <circle cx="74" cy="38" r="3.5" fill="#003A7A" opacity="0.8"/>
+        </svg>
+        <div class="option-label">Burbujas 🫧</div>
+      </div>
+
+      <div class="option-card" data-value="triangular" onclick="select(this,'wheels')">
+        <svg class="option-svg" viewBox="0 0 90 56">
+          <!-- Triangular/turbo -->
+          <circle cx="22" cy="30" r="18" fill="#111" stroke="#A855F7" stroke-width="2"/>
+          <circle cx="22" cy="30" r="8" fill="#A855F7"/>
+          <circle cx="22" cy="30" r="3" fill="#222"/>
+          <line x1="22" y1="12" x2="14" y2="46" stroke="#A855F7" stroke-width="2"/>
+          <line x1="22" y1="12" x2="30" y2="46" stroke="#A855F7" stroke-width="2"/>
+          <line x1="4" y1="38" x2="40" y2="38" stroke="#A855F7" stroke-width="2"/>
+          <circle cx="68" cy="30" r="18" fill="#111" stroke="#A855F7" stroke-width="2"/>
+          <circle cx="68" cy="30" r="8" fill="#A855F7"/>
+          <circle cx="68" cy="30" r="3" fill="#222"/>
+          <line x1="68" y1="12" x2="60" y2="46" stroke="#A855F7" stroke-width="2"/>
+          <line x1="68" y1="12" x2="76" y2="46" stroke="#A855F7" stroke-width="2"/>
+          <line x1="50" y1="38" x2="86" y2="38" stroke="#A855F7" stroke-width="2"/>
+        </svg>
+        <div class="option-label">Turbo Tri ⚡</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ALTURA Y INCLINACIÓN -->
+  <div class="section height">
+    <div class="section-title"><span class="emoji">📐</span> Altura e Inclinación del Chasis</div>
+    <div class="slider-section">
+
+      <!-- HEIGHT -->
+      <div>
+        <div class="slider-row">
+          <div class="slider-preview">
+            <svg id="height-preview" width="90" height="56" viewBox="0 0 90 56">
+              <rect id="hp-body" x="10" y="24" width="70" height="14" rx="5" fill="#2ECC40"/>
+              <ellipse id="hp-wl" cx="20" cy="43" rx="9" ry="6" fill="#222"/>
+              <ellipse id="hp-wr" cx="70" cy="43" rx="9" ry="6" fill="#222"/>
+              <ellipse cx="20" cy="43" rx="5" ry="3.5" fill="#555"/>
+              <ellipse cx="70" cy="43" rx="5" ry="3.5" fill="#555"/>
+            </svg>
+          </div>
+          <div class="slider-controls">
+            <div class="slider-label">🔼 Altura del auto</div>
+            <input type="range" id="height-slider" min="0" max="4" value="2" step="1" oninput="updateHeight(this.value)">
+            <div class="range-labels">
+              <span>🐛 Muy bajo</span>
+              <span>Normal</span>
+              <span>🦒 Muy alto</span>
+            </div>
+          </div>
+        </div>
+        <div class="keep-btn-row">
+          <button class="keep-slider-btn active" id="height-keep-btn" onclick="toggleKeep('height')">✏️ Dejar como está en mi dibujo</button>
+        </div>
+      </div>
+
+      <!-- TILT -->
+      <div>
+        <div class="slider-row">
+          <div class="slider-preview">
+            <svg id="tilt-preview" width="90" height="56" viewBox="0 0 90 56">
+              <g id="tp-group" transform="rotate(0, 45, 30)">
+                <rect id="tp-body" x="10" y="22" width="70" height="14" rx="5" fill="#FFD600"/>
+                <ellipse id="tp-wl" cx="20" cy="42" rx="9" ry="6" fill="#222"/>
+                <ellipse id="tp-wr" cx="70" cy="42" rx="9" ry="6" fill="#222"/>
+                <ellipse cx="20" cy="42" rx="5" ry="3.5" fill="#555"/>
+                <ellipse cx="70" cy="42" rx="5" ry="3.5" fill="#555"/>
+              </g>
+            </svg>
+          </div>
+          <div class="slider-controls">
+            <div class="slider-label">↗️ Inclinación del chasis (de frente hacia atrás)</div>
+            <input type="range" id="tilt-slider" min="0" max="4" value="2" step="1" oninput="updateTilt(this.value)">
+            <div class="range-labels">
+              <span>⬇️ Frente bajo</span>
+              <span>Nivelado</span>
+              <span>⬆️ Frente alto</span>
+            </div>
+          </div>
+        </div>
+        <div class="keep-btn-row">
+          <button class="keep-slider-btn active" id="tilt-keep-btn" onclick="toggleKeep('tilt')">✏️ Dejar como está en mi dibujo</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROMPT -->
+  <div class="prompt-section">
+    <div class="section-title">🤖 Tu Prompt para la IA</div>
+    <p style="color:var(--subtext); font-size:0.9rem; font-weight:600;">Presiona el botón para generar el texto que le darás a la IA junto con tu dibujo 👇</p>
+
+    <div class="btn-row">
+      <button class="btn btn-generate" id="gen-btn" onclick="generatePrompt()">
+        <span>⚡</span> Generar Prompt
+      </button>
+      <button class="btn btn-copy" id="copy-btn" onclick="copyPrompt()">
+        <span>📋</span> Copiar
+      </button>
+    </div>
+
+    <textarea id="prompt-output" readonly placeholder="Aquí aparecerá el prompt cuando presiones '⚡ Generar Prompt'..."></textarea>
+    <div class="copy-feedback" id="copy-feedback">✅ ¡Copiado! Ya puedes pegarlo en la IA.</div>
+  </div>
+
+</div>
+
+<script>
+// =====================
+// STATE
+// =====================
+const state = {
+  chassis: 'keep',
+  wheels: 'keep',
+  height: { keep: true, value: 2 },
+  tilt:   { keep: true, value: 2 }
+};
+
+// =====================
+// LABELS
+// =====================
+const chassisLabels = {
+  keep: null,
+  f1: 'chasis estilo Fórmula 1, muy alargado y aerodinámico, con alas delanteras y traseras',
+  gokart: 'chasis estilo Go-Kart clásico, bajo y plano, sin carrocería cerrada, con estructura tubular visible',
+  mariokart: 'chasis estilo Mario Kart, redondeado y caricaturesco con formas llamativas y coloridas',
+  muscle: 'chasis estilo Muscle Car americano, amplio, con capó largo y cabina elevada',
+  rally: 'chasis estilo Rally / Off-Road, alto y robusto con guarda-barros amplios y portaequipaje en el techo',
+  futuristic: 'chasis futurista en forma de cuña, bajo en el frente y puntiagudo, con líneas afiladas y aspecto tecnológico',
+  monster: 'chasis estilo Monster Truck, cabina alta y compacta con suspensión exagerada y llantas gigantes'
+};
+
+const wheelsLabels = {
+  keep: null,
+  thin_race: 'llantas delgadas de carrera con radios simples, estilo Fórmula 1',
+  fat_offroad: 'llantas anchas de off-road con dibujo de terreno profundo y aspecto todoterreno',
+  chrome_spoke: 'rines de rayos cromados brillantes con efecto metálico espejo',
+  star_alloy: 'rines en forma de estrella con diseño racing en color rojo',
+  bubble: 'llantas de estilo caricatura, grandes y redondeadas con diseño de burbujas',
+  triangular: 'rines con diseño triangular tipo turbo en color morado/púrpura'
+};
+
+const heightDescriptions = [
+  'chasis extremadamente bajo, casi rasando el suelo',
+  'chasis bastante bajo',
+  null, // keep
+  'chasis elevado, con mayor espacio entre el suelo y el cuerpo del auto',
+  'chasis muy alto, tipo vehículo off-road o monster truck'
+];
+
+const tiltDescriptions = [
+  'con el frente del auto muy bajo e inclinado hacia el piso (postura de ataque)',
+  'con el frente ligeramente más bajo que la parte trasera',
+  null, // level
+  'con la parte trasera ligeramente más baja, frente levantado',
+  'con el frente del auto muy elevado, inclinado hacia arriba'
+];
+
+// =====================
+// SELECTION
+// =====================
+function select(card, group) {
+  document.querySelectorAll(`#${group}-options .option-card`).forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state[group] = card.dataset.value;
+}
+
+// =====================
+// SLIDER HEIGHT
+// =====================
+function updateHeight(val) {
+  val = parseInt(val);
+  state.height.value = val;
+  if (state.height.keep) {
+    state.height.keep = false;
+    document.getElementById('height-keep-btn').classList.remove('active');
+  }
+  // Update preview
+  const heights = [48, 42, 36, 30, 22];
+  const bodyY = heights[val];
+  const body = document.getElementById('hp-body');
+  const wl = document.getElementById('hp-wl');
+  const wr = document.getElementById('hp-wr');
+  body.setAttribute('y', bodyY - 7);
+  wl.setAttribute('cy', bodyY + 8);
+  wr.setAttribute('cy', bodyY + 8);
+  document.querySelectorAll('#height-preview ellipse[cx="20"]').forEach(e => { if(e.id !== 'hp-wl') e.setAttribute('cy', bodyY+8); });
+  document.querySelectorAll('#height-preview ellipse[cx="70"]').forEach(e => { if(e.id !== 'hp-wr') e.setAttribute('cy', bodyY+8); });
+}
+
+// =====================
+// SLIDER TILT
+// =====================
+function updateTilt(val) {
+  val = parseInt(val);
+  state.tilt.value = val;
+  if (state.tilt.keep) {
+    state.tilt.keep = false;
+    document.getElementById('tilt-keep-btn').classList.remove('active');
+  }
+  const angles = [-12, -6, 0, 6, 12];
+  document.getElementById('tp-group').setAttribute('transform', `rotate(${angles[val]}, 45, 30)`);
+}
+
+// =====================
+// TOGGLE KEEP
+// =====================
+function toggleKeep(type) {
+  state[type].keep = !state[type].keep;
+  const btn = document.getElementById(`${type}-keep-btn`);
+  btn.classList.toggle('active', state[type].keep);
+  if (state[type].keep) {
+    document.getElementById(`${type}-slider`).value = 2;
+    if (type === 'height') updateHeightVisual(2);
+    if (type === 'tilt') document.getElementById('tp-group').setAttribute('transform', 'rotate(0,45,30)');
+  }
+}
+
+function updateHeightVisual(val) {
+  const heights = [48, 42, 36, 30, 22];
+  const bodyY = heights[val];
+  document.getElementById('hp-body').setAttribute('y', bodyY - 7);
+  document.getElementById('hp-wl').setAttribute('cy', bodyY + 8);
+  document.getElementById('hp-wr').setAttribute('cy', bodyY + 8);
+}
+
+// =====================
+// GENERATE PROMPT
+// =====================
+function generatePrompt() {
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('animating');
+  setTimeout(() => btn.classList.remove('animating'), 700);
+
+  const changes = [];
+
+  // Chassis
+  if (state.chassis !== 'keep' && chassisLabels[state.chassis]) {
+    changes.push(`Modifica el **chasis** para que tenga un ${chassisLabels[state.chassis]}.`);
+  }
+
+  // Wheels
+  if (state.wheels !== 'keep' && wheelsLabels[state.wheels]) {
+    changes.push(`Cambia las **llantas y rines** por ${wheelsLabels[state.wheels]}.`);
+  }
+
+  // Height
+  if (!state.height.keep && state.height.value !== 2) {
+    changes.push(`Ajusta la **altura del chasis**: ${heightDescriptions[state.height.value]}.`);
+  }
+
+  // Tilt
+  if (!state.tilt.keep && state.tilt.value !== 2) {
+    changes.push(`Aplica una **inclinación al chasis**: ${tiltDescriptions[state.tilt.value]}.`);
+  }
+
+  let prompt = '';
+
+  if (changes.length === 0) {
+    prompt = `Basándote en el automóvil de la imagen, crea una versión digital de alta calidad del carrito de carreras conservando exactamente las características del dibujo original. Mantén las proporciones, la forma del chasis, el estilo de las llantas y todos los detalles tal como aparecen en el dibujo. El resultado debe ser un automóvil bien definido, con colores vivos, contornos limpios y aspecto profesional, listo para ser usado como referencia en un modelo 3D.`;
+  } else {
+    const changeList = changes.map((c, i) => `${i + 1}. ${c}`).join('\n');
+    prompt = `Basándote en el automóvil de la imagen, crea una versión digital de alta calidad del carrito de carreras aplicando las siguientes modificaciones:\n\n${changeList}\n\nConserva todos los demás detalles del dibujo original tal como están. El resultado debe ser un automóvil bien definido, con colores vivos, contornos limpios y aspecto profesional, listo para ser usado como referencia en un modelo 3D.`;
+  }
+
+  document.getElementById('prompt-output').value = prompt;
+  document.getElementById('copy-feedback').classList.remove('show');
+}
+
+// =====================
+// COPY PROMPT
+// =====================
+function copyPrompt() {
+  const textarea = document.getElementById('prompt-output');
+  if (!textarea.value.trim()) { generatePrompt(); return; }
+
+  const text = textarea.value;
+
+  function onSuccess() {
+    const btn = document.getElementById('copy-btn');
+    btn.classList.add('copied');
+    btn.innerHTML = '<span>✅</span> ¡Copiado!';
+    document.getElementById('copy-feedback').classList.add('show');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<span>📋</span> Copiar';
+    }, 2500);
+  }
+
+  function onError() {
+    // Fallback: select text so user can copy manually
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+    document.getElementById('copy-feedback').textContent = '⚠️ Selecciona el texto y presiona Ctrl+C para copiar.';
+    document.getElementById('copy-feedback').classList.add('show');
+  }
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
+      // Try execCommand fallback
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      const ok = document.execCommand('copy');
+      ok ? onSuccess() : onError();
+    });
+  } else {
+    // execCommand fallback for HTTP or older browsers
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+    const ok = document.execCommand('copy');
+    ok ? onSuccess() : onError();
+  }
+}
+
+// =====================
+// SPEED LINES DECO
+// =====================
+function makeSpeedLines() {
+  const cont = document.getElementById('speedLines');
+  const colors = ['#FF3B3B','#FFD600','#1E90FF','#A855F7','#2ECC40','#FF6B2B'];
+  for (let i = 0; i < 12; i++) {
+    const line = document.createElement('div');
+    line.className = 'speed-line';
+    const top = Math.random() * 100;
+    const width = 40 + Math.random() * 120;
+    const delay = Math.random() * 3;
+    const dur = 2 + Math.random() * 2;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    line.style.cssText = `top:${top}%;width:${width}px;background:${color};animation-delay:${delay}s;animation-duration:${dur}s;`;
+    cont.appendChild(line);
+  }
+}
+makeSpeedLines();
+</script>
+</body>
+</html>
